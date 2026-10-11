@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HealthCopilot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="server" href="server.js">
+<link rel="database" href="database.js">
+<link rel="package" href="package.json">
+</head>
+<body>
+<div class="page">
+
+  <!-- ================= DESKTOP DASHBOARD ================= -->
+  <section class="dashboard">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <span class="logo-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>
+        </span>
+        <span class="logo-text">HealthCopilot</span>
+      </div>
+
+      <nav class="nav">
+        <a href="#" class="nav-item active"><span class="ico">🏠</span>Dashboard</a>
+        <a href="#" class="nav-item"><span class="ico">🤖</span>AI Health Assistant</a>
+        <a href="#" class="nav-item"><span class="ico">🫀</span>Health Monitor</a>
+        <a href="#" class="nav-item"><span class="ico">💊</span>Medicine Reminder</a>
+        <a href="#" class="nav-item"><span class="ico">📄</span>Health Reports</a>
+        <a href="#" class="nav-item"><span class="ico">🩺</span>Doctor Connect</a>
+        <a href="#" class="nav-item"><span class="ico">⚙️</span>Settings</a>
+      </nav>
+
+      <div class="side-card">
+        <h4>Better Health<br>Brighter Future</h4>
+        <p>Your AI copilot for a healthier you.</p>
+        <span class="heart">♥</span>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1>Good Morning, Aditya! 👋</h1>
+          <p class="muted">Here's your health overview for today.</p>
+        </div>
+        <div class="user">
+          <button class="bell" aria-label="Notifications">🔔</button>
+          <div class="avatar"></div>
+          <span class="uname">Aditya</span>
+          <span class="chev">⌄</span>
+        </div>
+      </header>
+
+      <div class="grid">
+        <div class="left-col">
+
+          <!-- Health score -->
+          <div class="score-card">
+            <div class="score-body">
+              <h3>Your Health Score</h3>
+              <div class="score-row">
+                <div class="ring" style="--p:82">
+                  <div class="ring-inner"><strong>82</strong><span>/100</span></div>
+                </div>
+                <div class="score-text">
+                  <span class="badge-good">Good</span>
+                  <p>You're doing well! Keep up the healthy habits. A little more sleep and water can make it even better.</p>
+                  <a href="#" class="btn btn-primary">View Details →</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="bot-wrap">
+              <div class="bubble">How can I help you today?</div>
+              <div class="bot">
+                <div class="bot-head">
+                  <div class="bot-face">
+                    <i class="eye l"></i><i class="eye r"></i><i class="smile"></i>
+                  </div>
+                </div>
+                <div class="bot-body"><span class="plus">+</span></div>
+                <div class="bot-arm"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-h"><span class="s-ico red">❤️</span>Heart Rate</div>
+              <div class="stat-v">72 <small>bpm</small></div>
+              <div class="stat-s green">Normal</div>
+              <svg class="spark" viewBox="0 0 120 36" preserveAspectRatio="none"><polyline fill="none" stroke="#17b890" stroke-width="2" points="0,28 15,22 30,26 45,16 60,20 75,14 90,18 105,10 120,8"/></svg>
+            </div>
+
+            <div class="stat">
+              <div class="stat-h"><span class="s-ico">👟</span>Steps</div>
+              <div class="stat-v">8,420</div>
+              <div class="stat-s">Today</div>
+              <div class="bars blue">
+                <i style="height:20%"></i><i style="height:30%"></i><i style="height:25%"></i><i style="height:45%"></i><i style="height:40%"></i><i style="height:60%"></i><i style="height:50%"></i><i style="height:80%"></i><i style="height:70%"></i><i style="height:100%"></i><i style="height:65%"></i>
+              </div>
+            </div>
+
+            <div class="stat">
+              <div class="stat-h"><span class="s-ico">🌙</span>Sleep</div>
+              <div class="stat-v">7h 20m</div>
+              <div class="stat-s green">Good</div>
+              <div class="progress"><span style="width:50%"></span></div>
+            </div>
+
+            <div class="stat">
+              <div class="stat-h"><span class="s-ico">🔥</span>Calories</div>
+              <div class="stat-v">1,250 <small>kcal</small></div>
+              <div class="stat-s">Today</div>
+              <div class="bars orange">
+                <i style="height:40%"></i><i style="height:60%"></i><i style="height:35%"></i><i style="height:70%"></i><i style="height:55%"></i><i style="height:90%"></i><i style="height:50%"></i><i style="height:75%"></i><i style="height:45%"></i><i style="height:65%"></i><i style="height:80%"></i><i style="height:55%"></i><i style="height:40%"></i><i style="height:70%"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Insights -->
+          <div class="insight-row">
+            <div class="insights">
+              <div class="insights-h">
+                <h3>💡 Health Insights</h3>
+                <a href="#" class="link">View all →</a>
+              </div>
+              <div class="insight-item">
+                <span class="insight-ico">🌙</span>
+                <div>
+                  <h5>Try to sleep 7–9 hours daily</h5>
+                  <p>Your sleep duration is slightly low for optimal recovery and focus. A better sleep routine can boost your energy and immunity.</p>
+                </div>
+              </div>
+            </div>
+            <div class="quote">
+              <p>Small steps today, big results tomorrow.</p>
+              <svg class="mountain" viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice">
+                <defs>
+                  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#2a4b86"/><stop offset="1" stop-color="#f1c9a5"/>
+                  </linearGradient>
+                </defs>
+                <rect width="400" height="200" fill="url(#sky)"/>
+                <path d="M0 150 L80 100 L140 130 L220 70 L300 120 L400 90 L400 200 L0 200Z" fill="#6c86a8" opacity=".7"/>
+                <path d="M0 180 L90 140 L180 165 L260 130 L340 160 L400 145 L400 200 L0 200Z" fill="#2f4a3a"/>
+                <circle cx="290" cy="112" r="4" fill="#111"/><rect x="288" y="115" width="4" height="12" rx="2" fill="#111"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick actions -->
+        <aside class="quick">
+          <h3>Quick Actions</h3>
+          <a href="#" class="qa"><span class="qa-ico c1">💬</span><div><b>Chat with AI</b><small>Ask anything about your health</small></div><i>›</i></a>
+          <a href="#" class="qa"><span class="qa-ico c2">📋</span><div><b>Log Health Data</b><small>Track your vitals &amp; activity</small></div><i>›</i></a>
+          <a href="#" class="qa"><span class="qa-ico c3">☁️</span><div><b>Upload Reports</b><small>Get instant insights</small></div><i>›</i></a>
+          <a href="#" class="qa"><span class="qa-ico c4">🧑‍⚕️</span><div><b>Book a Doctor</b><small>Consult certified doctors</small></div><i>›</i></a>
+        </aside>
+      </div>
+    </main>
+  </section>
+
+  <!-- ================= MOBILE SCREENS ================= -->
+  <section class="phones">
+
+    <!-- AI Assistant -->
+    <article class="phone">
+      <div class="p-head"><span class="back">←</span><b>AI Health Assistant</b><span class="menu">☰</span></div>
+      <div class="chat">
+        <div class="msg user">I have a headache since morning. What could be the reason?<time>10:24 AM</time></div>
+        <div class="msg-bot">
+          <span class="mini-bot">☺</span>
+          <div class="msg bot-msg">
+            Headaches can be caused by several factors like dehydration, lack of sleep, stress, eye strain or low blood sugar. Since you also mentioned less sleep in your last report, it might be due to that.
+            <p class="sug">Here are some suggestions:</p>
+            <ul>
+              <li>Drink enough water</li>
+              <li>Take a short rest</li>
+              <li>Avoid screen time for a while</li>
+              <li>If it continues for more than 2 days, please consult a doctor.</li>
+            </ul>
+            <time>10:24 AM</time>
+          </div>
+        </div>
+      </div>
+      <div class="chat-input"><input type="text" placeholder="Type a message..."><button aria-label="Send">➤</button></div>
+    </article>
+
+    <!-- Reports -->
+    <article class="phone">
+      <div class="p-head"><span class="back">←</span><b>Health Reports</b><span class="menu">⋮</span></div>
+      <div class="tabs"><span class="tab on">All</span><span class="tab">Lab Reports</span><span class="tab">Prescriptions</span><span class="tab">History</span></div>
+      <ul class="reports">
+        <li><span class="r-ico r1">📕</span><div><b>Blood Report</b><small>12 Sep 2025 • Pathology Lab</small></div><a href="#" class="view">View</a></li>
+        <li><span class="r-ico r2">📘</span><div><b>X-Ray (Chest)</b><small>05 Sep 2025 • City Hospital</small></div><a href="#" class="view">View</a></li>
+        <li><span class="r-ico r3">📙</span><div><b>Prescription</b><small>28 Aug 2025 • Dr. Sharma</small></div><a href="#" class="view">View</a></li>
+        <li><span class="r-ico r4">📗</span><div><b>Fitness Report</b><small>20 Aug 2025 • SmartFit</small></div><a href="#" class="view">View</a></li>
+      </ul>
+      <div class="upload">
+        <div><b>Upload your reports</b><small>Get AI-powered insights in seconds.</small><a href="#" class="btn btn-primary sm">Upload Now</a></div>
+        <span class="cloud">☁️</span>
+      </div>
+      <nav class="tabbar">
+        <a>🏠<span>Home</span></a><a class="on">📄<span>Reports</span></a><a>💬<span>Chat</span></a><a>👤<span>Profile</span></a>
+      </nav>
+    </article>
+
+    <!-- Medicine -->
+    <article class="phone">
+      <div class="p-head"><span>📅</span><b>Medicine Reminder</b><span></span></div>
+      <div class="dates">
+        <div class="date on"><b>Today</b><small>12 Sep</small></div>
+        <div class="date"><b>13</b><small>Sep</small></div>
+        <div class="date"><b>14</b><small>Sep</small></div>
+        <div class="date"><b>15</b><small>Sep</small></div>
+        <div class="date"><b>16</b><small>Sep</small></div>
+      </div>
+      <ul class="meds">
+        <li><span class="pill done">✔</span><div><b>Metformin 500 mg</b><small>After Breakfast • 1 Tablet</small><em>08:00 AM</em></div><span class="check on">✔</span></li>
+        <li><span class="pill"></span><div><b>Vitamin D3</b><small>After Lunch • 1 Capsule</small><em>01:00 PM</em></div><span class="check"></span></li>
+        <li><span class="pill"></span><div><b>Omega 3</b><small>After Dinner • 1 Capsule</small><em>08:00 PM</em></div><span class="check"></span></li>
+      </ul>
+      <a href="#" class="btn btn-primary wide">Add Medicine</a>
+      <nav class="tabbar">
+        <a class="on">🏠<span>Home</span></a><a>📄<span>Reports</span></a><a>💬<span>Chat</span></a><a>👤<span>Profile</span></a>
+      </nav>
+    </article>
+
+    <!-- Doctors -->
+    <article class="phone">
+      <div class="p-head"><span>🩺</span><b>Doctor Connect</b><span>🔍</span></div>
+      <div class="tabs small"><span class="tab on">General Physician</span><span class="tab">Dermatologist</span><span class="tab">Cardiologist</span></div>
+      <ul class="docs">
+        <li>
+          <div class="doc-pic p1"></div>
+          <div class="doc-info"><b>Dr. Neha Sharma</b><small>General Physician</small><small>MBBS, MD • 8 yrs exp</small><small class="rate">⭐ 4.8 (1.2k) <i class="dot"></i> Online</small><strong>₹499</strong></div>
+          <a href="#" class="btn btn-primary sm book">Book</a>
+        </li>
+        <li>
+          <div class="doc-pic p2"></div>
+          <div class="doc-info"><b>Dr. Rahul Verma</b><small>General Medicine</small><small>MBBS, MD • 10 yrs exp</small><small class="rate">⭐ 4.7 (980) <i class="dot"></i> Online</small><strong>₹599</strong></div>
+          <a href="#" class="btn btn-primary sm book">Book</a>
+        </li>
+        <li>
+          <div class="doc-pic p3"></div>
+          <div class="doc-info"><b>Dr. Pooja Singh</b><small>Nutritionist</small><small>BSc Nutrition • 5 yrs exp</small><small class="rate">⭐ 4.6 (720) <i class="dot"></i> Online</small><strong>₹399</strong></div>
+          <a href="#" class="btn btn-primary sm book">Book</a>
+        </li>
+      </ul>
+      <nav class="tabbar">
+        <a class="on">🏠<span>Home</span></a><a>📄<span>Reports</span></a><a>💬<span>Chat</span></a><a>👤<span>Profile</span></a>
+      </nav>
+    </article>
+
+    <!-- Dark promo -->
+    <article class="phone dark">
+      <h3>Your Health<br>In One Place</h3>
+      <p class="tagline">Track. Understand. Improve.</p>
+      <div class="body-wrap">
+        <div class="silhouette"></div>
+        <ul class="chips">
+          <li><span class="chip-ico pink">❤️</span><div><small>Heart Rate</small><b>72 <em>bpm</em></b></div></li>
+          <li><span class="chip-ico green">👟</span><div><small>Steps</small><b>8,420</b></div></li>
+          <li><span class="chip-ico purple">🌙</span><div><small>Sleep</small><b>7h 20m</b></div></li>
+          <li><span class="chip-ico orange">🔥</span><div><small>Calories</small><b>1,250 <em>kcal</em></b></div></li>
+        </ul>
+      </div>
+      <a href="#" class="btn btn-primary wide">Start Tracking →</a>
+    </article>
+
+  </section>
+</div>
+</body>
+</html>
