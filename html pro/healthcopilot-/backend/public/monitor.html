@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Health Monitor - HealthCopilot</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+<section class="dashboard">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar">
+      <div><h1>Health Monitor</h1><p class="muted">Track your vitals and activity.</p></div>
+      <div class="user" id="userBox"></div>
+    </header>
+
+    <div class="stack">
+      <div class="stats" id="metricCards">
+        <div class="stat pick on" data-m="heart_rate"><div class="stat-h"><span class="s-ico">❤️</span>Heart Rate</div><div class="stat-v" id="mHr">--</div></div>
+        <div class="stat pick" data-m="steps"><div class="stat-h"><span class="s-ico">👟</span>Steps</div><div class="stat-v" id="mSteps">--</div></div>
+        <div class="stat pick" data-m="sleep"><div class="stat-h"><span class="s-ico">🌙</span>Sleep</div><div class="stat-v" id="mSleep">--</div></div>
+        <div class="stat pick" data-m="calories"><div class="stat-h"><span class="s-ico">🔥</span>Calories</div><div class="stat-v" id="mCal">--</div></div>
+      </div>
+
+      <div class="card">
+        <h3>Log new reading</h3>
+        <form class="inline-form" id="logForm">
+          <label class="fld"><span>Type</span>
+            <select name="type" id="logType">
+              <option value="heart_rate">Heart rate (bpm)</option><option value="steps">Steps</option>
+              <option value="sleep">Sleep (hours, e.g. 7.5)</option><option value="calories">Calories (kcal)</option>
+            </select></label>
+          <label class="fld"><span>Value</span><input name="value" type="number" step="any" min="0" required placeholder="e.g. 72"></label>
+          <button class="btn btn-primary">Save</button>
+        </form>
+      </div>
+
+      <div class="two-col">
+        <div class="card"><h3 id="chartTitle">Last 7 days</h3><div class="chart" id="chart"></div></div>
+        <div class="card"><h3>Recent entries</h3><table class="table"><thead><tr><th>Date</th><th>Time</th><th>Value</th></tr></thead><tbody id="recent"></tbody></table></div>
+      </div>
+    </div>
+  </main>
+</section>
+</div>
+<script src="common.js"></script>
+<script>
+HC.run(async () => {
+  const { $, fmt, ymd } = HC;
+  let metric = 'heart_rate';
+  const META = {
+    heart_rate: { label: 'Heart rate', unit: 'bpm', f: (v) => Math.round(v) },
+    steps: { label: 'Steps', unit: '', f: (v) => fmt.num(v) },
+    sleep: { label: 'Sleep', unit: 'h', f: (v) => Number(v).toFixed(1) },
+    calories: { label: 'Calories', unit: 'kcal', f: (v) => fmt.num(v) },
+  };
+
+  async function loadToday() {
+    const s = (await HC.api('/dashboard')).stats;
+    $('#mHr').innerHTML = s.heart_rate == null ? '--' : `${Math.round(s.heart_rate)} <small>bpm</small>`;
+    $('#mSteps').textContent = s.steps == null ? '--' : fmt.num(s.steps);
+    $('#mSleep').textContent = s.sleep == null ? '--' : fmt.sleep(s.sleep);
+    $('#mCal').innerHTML = s.calories == null ? '--' : `${fmt.num(s.calories)} <small>kcal</small>`;
+  }
+
+  async function loadChart() {
+    const m = META[metric];
+    $('#chartTitle').textContent = `${m.label} - last 7 days`;
+    const rows = await HC.api(`/health-logs?type=${metric}&days=7`);
+    const byDay = {};
+    rows.forEach((r) => { byDay[ymd(new Date(r.logged_at))] = r.value; }); // rows ascending, last value of day wins
+    const days = [];
+    for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); days.push({ key: ymd(d), label: d.toLocaleDateString('en-GB', { weekday: 'short' }) }); }
+    const max = Math.max(1, ...days.map((d) => byDay[d.key] || 0));
+    $('#chart').innerHTML = days.map((d) => {
+      const v = byDay[d.key];
+      return `<div class="col"><b>${v == null ? '' : m.f(v)}</b><i style="height:${v == null ? 0 : Math.max((v / max) * 100, 4)}%"></i>${d.label}</div>`;
+    }).join('');
+    $('#recent').innerHTML = rows.length
+      ? rows.slice().reverse().slice(0, 8).map((r) => `<tr><td>${fmt.date(r.logged_at)}</td><td>${fmt.clock(r.logged_at)}</td><td>${m.f(r.value)} ${m.unit}</td></tr>`).join('')
+      : '<tr><td colspan="3" class="empty">Abhi koi reading nahi. Upar se add karo.</td></tr>';
+  }
+
+  $('#metricCards').addEventListener('click', (e) => {
+    const c = e.target.closest('.pick'); if (!c) return;
+    metric = c.dataset.m;
+    document.querySelectorAll('.pick').forEach((x) => x.classList.toggle('on', x === c));
+    $('#logType').value = metric;
+    loadChart().catch((x) => HC.toast(x.message));
+  });
+
+  $('#logForm').onsubmit = async (e) => {
+    e.preventDefault();
+    const f = e.target; const btn = f.querySelector('button'); btn.disabled = true;
+    try {
+      await HC.api('/health-logs', { method: 'POST', body: { type: f.type.value, value: Number(f.value.value) } });
+      HC.toast('Saved ✅'); f.value.value = ''; metric = f.type.value;
+      document.querySelectorAll('.pick').forEach((x) => x.classList.toggle('on', x.dataset.m === metric));
+      await Promise.all([loadToday(), loadChart()]);
+    } catch (x) { HC.toast(x.message); }
+    btn.disabled = false;
+  };
+
+  await Promise.all([loadToday(), loadChart()]);
+});
+</script>
+</body>
+</html>

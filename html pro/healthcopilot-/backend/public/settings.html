@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings - HealthCopilot</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+<section class="dashboard">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar">
+      <div><h1>Settings</h1><p class="muted">Your account.</p></div>
+      <div class="user" id="userBox"></div>
+    </header>
+
+    <div class="card" style="max-width:520px">
+      <div class="profile"><div class="avatar"></div><div><b id="pName">--</b><span class="muted" id="pEmail"></span></div></div>
+      <p class="muted" style="margin-bottom:16px;font-size:13px">HealthCopilot gives general wellness guidance, not medical diagnosis. For serious symptoms, please see a doctor.</p>
+      <button class="btn danger" id="logoutBtn">Logout</button>
+    </div>
+  </main>
+</section>
+</div>
+<script src="common.js"></script>
+<script>
+HC.run(async () => {
+  const me = await HC.api('/me');
+  HC.$('#pName').textContent = me.name;
+  HC.$('#pEmail').textContent = me.email;
+  HC.$('#logoutBtn').onclick = () => { if (confirm('Logout karna hai?')) HC.logout(); };
+});
+</script>
+</body>
+</html>

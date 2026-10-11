@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Health Assistant - HealthCopilot</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+<section class="dashboard">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar">
+      <div><h1>AI Health Assistant</h1><p class="muted">Ask anything about your health. This is guidance, not a diagnosis.</p></div>
+      <div class="user" id="userBox"></div>
+    </header>
+
+    <div class="card chat-page">
+      <div class="chat" id="chatBox"></div>
+      <div class="prompts" id="prompts">
+        <button class="prompt">I have a headache since morning</button>
+        <button class="prompt">How can I sleep better?</button>
+        <button class="prompt">Is my heart rate normal?</button>
+        <button class="prompt">Tips to drink more water</button>
+      </div>
+      <div class="chat-input"><input type="text" id="chatInput" placeholder="Type a message..." autocomplete="off"><button id="chatSend" aria-label="Send">➤</button></div>
+    </div>
+  </main>
+</section>
+</div>
+<script src="common.js"></script>
+<script>
+HC.run(async () => {
+  const { $, esc, fmt } = HC;
+  const box = $('#chatBox');
+
+  function addMsg(role, text, at) {
+    const el = document.createElement('div');
+    if (role === 'user') { el.className = 'msg user'; el.innerHTML = `${esc(text)}<time>${fmt.clock(at)}</time>`; }
+    else { el.className = 'msg-bot'; el.innerHTML = `<span class="mini-bot">☺</span><div class="msg bot-msg"><span class="t">${esc(text)}</span><time>${fmt.clock(at)}</time></div>`; }
+    box.appendChild(el); box.scrollTop = box.scrollHeight; return el;
+  }
+
+  async function send(text) {
+    text = (text || '').trim(); if (!text) return;
+    $('#chatInput').value = ''; addMsg('user', text);
+    const wait = addMsg('assistant', '…'); $('#chatSend').disabled = true;
+    try { wait.querySelector('.t').textContent = (await HC.api('/chat', { method: 'POST', body: { message: text } })).reply; }
+    catch (e) { wait.querySelector('.t').textContent = '⚠️ ' + e.message; }
+    $('#chatSend').disabled = false; box.scrollTop = box.scrollHeight;
+  }
+
+  $('#chatSend').onclick = () => send($('#chatInput').value);
+  $('#chatInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') send($('#chatInput').value); });
+  $('#prompts').addEventListener('click', (e) => { const b = e.target.closest('.prompt'); if (b) send(b.textContent); });
+
+  const rows = await HC.api('/chat');
+  if (!rows.length) addMsg('assistant', 'Hi! Main HealthCopilot hoon. Apni health ke baare mein kuch bhi poochho.');
+  rows.forEach((r) => addMsg(r.role, r.content, r.created_at));
+});
+</script>
+</body>
+</html>

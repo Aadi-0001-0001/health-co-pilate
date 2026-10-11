@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Medicine Reminder - HealthCopilot</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+<section class="dashboard">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar">
+      <div><h1>Medicine Reminder</h1><p class="muted">Never miss a dose.</p></div>
+      <div class="user" id="userBox"></div>
+    </header>
+
+    <div class="toolbar"><div class="dates wide" id="dateStrip" style="flex:1"></div><button class="btn btn-primary" id="addMed">+ Add Medicine</button></div>
+    <ul class="meds wide" id="medList"></ul>
+  </main>
+</section>
+</div>
+<script src="common.js"></script>
+<script>
+HC.run(async () => {
+  const { $, esc, fmt, ymd } = HC;
+  let sel = ymd(new Date());
+
+  function dates() {
+    const base = new Date();
+    $('#dateStrip').innerHTML = [0, 1, 2, 3, 4].map((i) => {
+      const d = new Date(base); d.setDate(base.getDate() + i);
+      const key = ymd(d), mon = d.toLocaleDateString('en-GB', { month: 'short' });
+      return `<div class="date ${key === sel ? 'on' : ''}" data-d="${key}"><b>${i === 0 ? 'Today' : d.getDate()}</b><small>${i === 0 ? d.getDate() + ' ' + mon : mon}</small></div>`;
+    }).join('');
+  }
+
+  async function load() {
+    dates();
+    const rows = await HC.api('/medicines?date=' + sel);
+    $('#medList').innerHTML = rows.length ? rows.map((m) => `
+      <li><span class="pill ${m.taken ? 'done' : ''}">${m.taken ? '✔' : ''}</span>
+        <div><b>${esc(m.name)}</b><small>${esc([m.timing, m.dose].filter(Boolean).join(' • '))}</small><em>${fmt.time12(m.time)}</em></div>
+        <button class="check ${m.taken ? 'on' : ''}" data-id="${m.id}" data-taken="${m.taken}" aria-label="Mark taken">${m.taken ? '✔' : ''}</button>
+        <button class="del" data-del="${m.id}" aria-label="Delete">🗑</button></li>`).join('')
+      : '<li class="empty">Koi medicine nahi. "Add Medicine" dabao.</li>';
+  }
+
+  $('#dateStrip').addEventListener('click', (e) => { const d = e.target.closest('.date'); if (d) { sel = d.dataset.d; load().catch((x) => HC.toast(x.message)); } });
+
+  $('#medList').addEventListener('click', async (e) => {
+    try {
+      const c = e.target.closest('.check');
+      if (c) { await HC.api(`/medicines/${c.dataset.id}/taken`, { method: 'PATCH', body: { date: sel, taken: c.dataset.taken !== '1' } }); return load(); }
+      const del = e.target.closest('.del');
+      if (del && confirm('Ye medicine delete karni hai?')) { await HC.api('/medicines/' + del.dataset.del, { method: 'DELETE' }); HC.toast('Deleted'); load(); }
+    } catch (x) { HC.toast(x.message); }
+  });
+
+  $('#addMed').onclick = () => HC.openForm({
+    title: 'Add medicine',
+    fields: [
+      { name: 'name', label: 'Medicine name', placeholder: 'e.g. Metformin 500 mg' },
+      { name: 'dose', label: 'Dose', placeholder: 'e.g. 1 Tablet' },
+      { name: 'timing', label: 'When', type: 'select', options: ['Before Breakfast', 'After Breakfast', 'After Lunch', 'After Dinner', 'Bedtime'] },
+      { name: 'time', label: 'Reminder time', type: 'time' },
+    ],
+    submit: 'Save medicine',
+    onSubmit: async (v) => { await HC.api('/medicines', { method: 'POST', body: v }); HC.closeModal(); HC.toast('Medicine added ✅'); load(); },
+  });
+
+  await load();
+});
+</script>
+</body>
+</html>

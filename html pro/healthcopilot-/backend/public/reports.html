@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Health Reports - HealthCopilot</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+<section class="dashboard">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar">
+      <div><h1>Health Reports</h1><p class="muted">Your reports in one place, with AI summaries.</p></div>
+      <div class="user" id="userBox"></div>
+    </header>
+
+    <div class="toolbar">
+      <div class="tabs" id="repTabs">
+        <button class="tab on" data-cat="">All</button><button class="tab" data-cat="Lab Reports">Lab Reports</button>
+        <button class="tab" data-cat="Prescriptions">Prescriptions</button><button class="tab" data-cat="History">History</button>
+      </div>
+      <button class="btn btn-primary" id="uploadBtn">☁️ Upload Report</button>
+    </div>
+    <ul class="reports wide" id="reportList"></ul>
+  </main>
+</section>
+</div>
+<script src="common.js"></script>
+<script>
+HC.run(async () => {
+  const { $, esc, fmt } = HC;
+  let cat = '';
+  const icons = { 'Lab Reports': ['r1', '📕'], Prescriptions: ['r3', '📙'], History: ['r2', '📘'] };
+
+  async function load() {
+    const rows = await HC.api('/reports' + (cat ? '?category=' + encodeURIComponent(cat) : ''));
+    $('#reportList').innerHTML = rows.length ? rows.map((r) => {
+      const [c, i] = icons[r.category] || ['r4', '📗'];
+      return `<li><span class="r-ico ${c}">${i}</span>
+        <div><b>${esc(r.title)}</b><small>${fmt.date(r.created_at)}${r.source ? ' • ' + esc(r.source) : ''}</small></div>
+        <button class="view" data-id="${r.id}" data-title="${esc(r.title)}" data-sum="${esc(r.ai_summary || '')}">View</button></li>`;
+    }).join('') : '<li class="empty">Koi report nahi. "Upload Report" dabao.</li>';
+  }
+
+  async function openFile(id) {
+    const w = window.open('', '_blank');
+    try {
+      const res = await fetch(`/api/reports/${id}/file`, { headers: { Authorization: 'Bearer ' + HC.token } });
+      if (!res.ok) throw new Error();
+      const url = URL.createObjectURL(await res.blob());
+      if (w) w.location = url; else location.href = url;
+    } catch { if (w) w.close(); HC.toast('File khul nahi payi'); }
+  }
+
+  function details(id, title, summary) {
+    HC.openInfo(title, summary || 'AI summary abhi nahi bani. "Get AI summary" dabao (sirf PDF ya image).', [
+      { label: 'Open file', ghost: true, onClick: () => openFile(id) },
+      { label: summary ? 'Refresh summary' : 'Get AI summary', onClick: async (btn) => {
+        btn.disabled = true; btn.textContent = 'Analysing…';
+        try { const r = await HC.api(`/reports/${id}/summarize`, { method: 'POST' }); details(id, title, r.summary); load(); }
+        catch (e) { btn.disabled = false; btn.textContent = 'Get AI summary'; HC.toast(e.message); }
+      } },
+    ]);
+  }
+
+  $('#reportList').addEventListener('click', (e) => { const v = e.target.closest('.view'); if (v) details(v.dataset.id, v.dataset.title, v.dataset.sum); });
+  $('#repTabs').addEventListener('click', (e) => {
+    const t = e.target.closest('.tab'); if (!t) return;
+    cat = t.dataset.cat; document.querySelectorAll('#repTabs .tab').forEach((x) => x.classList.toggle('on', x === t));
+    load().catch((x) => HC.toast(x.message));
+  });
+
+  $('#uploadBtn').onclick = () => HC.openForm({
+    title: 'Upload report',
+    fields: [
+      { name: 'title', label: 'Report name', placeholder: 'e.g. Blood Report' },
+      { name: 'category', label: 'Type', type: 'select', options: ['Lab Reports', 'Prescriptions', 'History'] },
+      { name: 'source', label: 'Lab / Doctor (optional)', required: false },
+      { name: 'file', label: 'File (PDF or image)', type: 'file', accept: '.pdf,image/*' },
+    ],
+    submit: 'Upload',
+    onSubmit: async (v, form) => { await HC.api('/reports', { method: 'POST', form: new FormData(form) }); HC.closeModal(); HC.toast('Report uploaded ✅'); load(); },
+  });
+
+  await load();
+});
+</script>
+</body>
+</html>

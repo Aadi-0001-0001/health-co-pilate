@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Login - HealthCopilot</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="auth-wrap">
+  <span class="logo-icon"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg></span>
+  <h1>HealthCopilot</h1>
+  <p>Track. Understand. Improve.</p>
+</div>
+<script src="common.js"></script>
+<script>
+function show(mode) {
+  const reg = mode === 'register';
+  HC.openForm({
+    title: reg ? 'Create your account' : 'Login to HealthCopilot',
+    closable: false,
+    fields: [
+      ...(reg ? [{ name: 'name', label: 'Name' }] : []),
+      { name: 'email', label: 'Email', type: 'email' },
+      { name: 'password', label: 'Password (min 6 characters)', type: 'password' },
+    ],
+    submit: reg ? 'Register' : 'Login',
+    footer: `<p class="switch">${reg ? 'Already have an account?' : 'New here?'} <a href="#" id="sw">${reg ? 'Login' : 'Register'}</a></p>`,
+    onSubmit: async (v) => {
+      HC.saveAuth(await HC.api('/auth/' + (reg ? 'register' : 'login'), { method: 'POST', body: v }));
+      location.replace('index.html');
+    },
+  });
+  document.getElementById('sw').onclick = (e) => { e.preventDefault(); show(reg ? 'login' : 'register'); };
+}
+show('login');
+</script>
+</body>
+</html>

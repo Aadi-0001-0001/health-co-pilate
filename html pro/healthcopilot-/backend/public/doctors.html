@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doctor Connect - HealthCopilot</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+<section class="dashboard">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar">
+      <div><h1>Doctor Connect</h1><p class="muted">Consult certified doctors online.</p></div>
+      <div class="user" id="userBox"></div>
+    </header>
+
+    <div class="stack">
+      <div class="tabs" id="docTabs">
+        <button class="tab on" data-sp="General Physician">General Physician</button><button class="tab" data-sp="Dermatologist">Dermatologist</button>
+        <button class="tab" data-sp="Cardiologist">Cardiologist</button><button class="tab" data-sp="Nutritionist">Nutritionist</button>
+      </div>
+      <ul class="docs grid-list" id="docList"></ul>
+      <div class="card"><h3>My appointments</h3><div id="apptList"></div></div>
+    </div>
+  </main>
+</section>
+</div>
+<script src="common.js"></script>
+<script>
+HC.run(async () => {
+  const { $, esc } = HC;
+  let sp = 'General Physician';
+
+  async function loadDocs() {
+    const rows = await HC.api('/doctors?specialty=' + encodeURIComponent(sp));
+    $('#docList').innerHTML = rows.length ? rows.map((d, i) => `
+      <li><div class="doc-pic p${(i % 3) + 1}"></div>
+        <div class="doc-info"><b>${esc(d.name)}</b><small>${esc(d.specialty)}</small><small>${esc(d.degree || '')} • ${d.experience} yrs exp</small>
+          <small class="rate">⭐ ${d.rating} (${d.reviews >= 1000 ? (d.reviews / 1000).toFixed(1) + 'k' : d.reviews}) ${d.is_online ? '<i class="dot"></i> Online' : ''}</small>
+          <strong>₹${d.fee}</strong></div>
+        <button class="btn btn-primary sm book" data-id="${d.id}" data-name="${esc(d.name)}">Book</button></li>`).join('')
+      : '<li class="empty">Is category mein abhi koi doctor nahi.</li>';
+  }
+
+  async function loadAppts() {
+    const rows = await HC.api('/appointments');
+    $('#apptList').innerHTML = rows.length
+      ? rows.map((a) => `<div class="appt"><span><b>${esc(a.doctor)}</b> <small>${esc(a.specialty)}</small></span><span>${esc(a.slot)}</span></div>`).join('')
+      : '<p class="empty">Abhi koi appointment nahi.</p>';
+  }
+
+  $('#docTabs').addEventListener('click', (e) => {
+    const t = e.target.closest('.tab'); if (!t) return;
+    sp = t.dataset.sp; document.querySelectorAll('#docTabs .tab').forEach((x) => x.classList.toggle('on', x === t));
+    loadDocs().catch((x) => HC.toast(x.message));
+  });
+
+  $('#docList').addEventListener('click', (e) => {
+    const b = e.target.closest('.book'); if (!b) return;
+    HC.openForm({
+      title: 'Book ' + b.dataset.name,
+      fields: [{ name: 'slot', label: 'Pick date & time', type: 'datetime-local' }],
+      submit: 'Confirm appointment',
+      onSubmit: async (v) => {
+        await HC.api('/appointments', { method: 'POST', body: { doctor_id: Number(b.dataset.id), slot: v.slot.replace('T', ' ') } });
+        HC.closeModal(); HC.toast('Appointment booked ✅'); loadAppts();
+      },
+    });
+  });
+
+  await Promise.all([loadDocs(), loadAppts()]);
+});
+</script>
+</body>
+</html>

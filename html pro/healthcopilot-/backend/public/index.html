@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard - HealthCopilot</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<div class="page">
+<section class="dashboard">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <header class="topbar">
+      <div><h1><span id="greeting">Good Morning! 👋</span></h1><p class="muted">Here's your health overview for today.</p></div>
+      <div class="user" id="userBox"></div>
+    </header>
+
+    <div class="grid">
+      <div class="left-col">
+        <div class="score-card">
+          <div class="score-body">
+            <h3>Your Health Score</h3>
+            <div class="score-row">
+              <div class="ring" id="ring" style="--p:0"><div class="ring-inner"><strong id="scoreNum">--</strong><span>/100</span></div></div>
+              <div class="score-text">
+                <span class="badge-good" id="scoreLabel">--</span>
+                <p>Aaj ka health data log karo taaki score sahi bane. Thodi aur neend aur paani se score badh sakta hai.</p>
+                <a href="monitor.html" class="btn btn-primary">View Details →</a>
+              </div>
+            </div>
+          </div>
+          <div class="bot-wrap">
+            <div class="bubble">How can I help you today?</div>
+            <div class="bot">
+              <div class="bot-head"><div class="bot-face"><i class="eye l"></i><i class="eye r"></i><i class="smile"></i></div></div>
+              <div class="bot-body"><span class="plus">+</span></div>
+              <div class="bot-arm"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats">
+          <a class="stat" href="monitor.html">
+            <div class="stat-h"><span class="s-ico">❤️</span>Heart Rate</div>
+            <div class="stat-v" id="hrVal">--</div>
+            <div class="stat-s green" id="hrStat">No data</div>
+            <svg class="spark" viewBox="0 0 120 36" preserveAspectRatio="none"><polyline fill="none" stroke="#17b890" stroke-width="2" points="0,28 15,22 30,26 45,16 60,20 75,14 90,18 105,10 120,8"/></svg>
+          </a>
+          <a class="stat" href="monitor.html">
+            <div class="stat-h"><span class="s-ico">👟</span>Steps</div>
+            <div class="stat-v" id="stepsVal">--</div>
+            <div class="stat-s">Today</div>
+            <div class="bars blue"><i style="height:20%"></i><i style="height:30%"></i><i style="height:25%"></i><i style="height:45%"></i><i style="height:40%"></i><i style="height:60%"></i><i style="height:50%"></i><i style="height:80%"></i><i style="height:70%"></i><i style="height:100%"></i><i style="height:65%"></i></div>
+          </a>
+          <a class="stat" href="monitor.html">
+            <div class="stat-h"><span class="s-ico">🌙</span>Sleep</div>
+            <div class="stat-v" id="sleepVal">--</div>
+            <div class="stat-s green" id="sleepStat">No data</div>
+            <div class="progress"><span id="sleepBar" style="width:0%"></span></div>
+          </a>
+          <a class="stat" href="monitor.html">
+            <div class="stat-h"><span class="s-ico">🔥</span>Calories</div>
+            <div class="stat-v" id="calVal">--</div>
+            <div class="stat-s">Today</div>
+            <div class="bars orange"><i style="height:40%"></i><i style="height:60%"></i><i style="height:35%"></i><i style="height:70%"></i><i style="height:55%"></i><i style="height:90%"></i><i style="height:50%"></i><i style="height:75%"></i><i style="height:45%"></i><i style="height:65%"></i><i style="height:80%"></i><i style="height:55%"></i><i style="height:40%"></i><i style="height:70%"></i></div>
+          </a>
+        </div>
+
+        <div class="insight-row">
+          <div class="insights">
+            <div class="insights-h"><h3>💡 Health Insights</h3></div>
+            <div class="insight-item"><span class="insight-ico">🌙</span><div><h5 id="insTitle">Loading…</h5><p id="insText"></p></div></div>
+          </div>
+          <div class="quote">
+            <p>Small steps today, big results tomorrow.</p>
+            <svg class="mountain" viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice">
+              <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a4b86"/><stop offset="1" stop-color="#f1c9a5"/></linearGradient></defs>
+              <rect width="400" height="200" fill="url(#sky)"/>
+              <path d="M0 150 L80 100 L140 130 L220 70 L300 120 L400 90 L400 200 L0 200Z" fill="#6c86a8" opacity=".7"/>
+              <path d="M0 180 L90 140 L180 165 L260 130 L340 160 L400 145 L400 200 L0 200Z" fill="#2f4a3a"/>
+              <circle cx="290" cy="112" r="4" fill="#111"/><rect x="288" y="115" width="4" height="12" rx="2" fill="#111"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <aside class="quick">
+        <h3>Quick Actions</h3>
+        <a href="assistant.html" class="qa"><span class="qa-ico c1">💬</span><div><b>Chat with AI</b><small>Ask anything about your health</small></div><i>›</i></a>
+        <a href="monitor.html" class="qa"><span class="qa-ico c2">📋</span><div><b>Log Health Data</b><small>Track your vitals &amp; activity</small></div><i>›</i></a>
+        <a href="reports.html" class="qa"><span class="qa-ico c3">☁️</span><div><b>Upload Reports</b><small>Get instant insights</small></div><i>›</i></a>
+        <a href="doctors.html" class="qa"><span class="qa-ico c4">🧑‍⚕️</span><div><b>Book a Doctor</b><small>Consult certified doctors</small></div><i>›</i></a>
+      </aside>
+    </div>
+  </main>
+</section>
+</div>
+<script src="common.js"></script>
+<script>
+HC.run(async () => {
+  const { $, fmt } = HC;
+  const d = await HC.api('/dashboard');
+  const hr = new Date().getHours();
+  $('#greeting').textContent = `Good ${hr < 12 ? 'Morning' : hr < 17 ? 'Afternoon' : 'Evening'}, ${d.user}! 👋`;
+  $('#scoreNum').textContent = d.score;
+  $('#ring').style.setProperty('--p', d.score);
+  $('#scoreLabel').textContent = d.label;
+  const s = d.stats;
+  $('#hrVal').innerHTML = s.heart_rate == null ? '--' : `${Math.round(s.heart_rate)} <small>bpm</small>`;
+  $('#stepsVal').textContent = s.steps == null ? '--' : fmt.num(s.steps);
+  $('#sleepVal').textContent = s.sleep == null ? '--' : fmt.sleep(s.sleep);
+  $('#calVal').innerHTML = s.calories == null ? '--' : `${fmt.num(s.calories)} <small>kcal</small>`;
+  $('#hrStat').textContent = s.heart_rate == null ? 'No data' : (s.heart_rate >= 60 && s.heart_rate <= 100 ? 'Normal' : 'Check with doctor');
+  $('#sleepStat').textContent = s.sleep == null ? 'No data' : (s.sleep >= 7 ? 'Good' : 'Low');
+  $('#sleepBar').style.width = Math.min(((s.sleep || 0) / 8) * 100, 100) + '%';
+  const ins = d.insights[0];
+  $('#insTitle').textContent = ins ? ins.title : 'You are on track!';
+  $('#insText').textContent = ins ? ins.text : 'Keep logging your health data to get personalised insights.';
+});
+</script>
+</body>
+</html>
